@@ -51,6 +51,14 @@ cp .env.example .env
 
 > エイリアスを設定すると `sail` だけで実行できます：`alias sail='[ -f sail ] && bash sail || bash vendor/bin/sail'`
 
+### 7. テスト（PHPUnit）
+
+```bash
+./vendor/bin/sail artisan test
+```
+
+テストはテスト用データベース `testing`（Sail の MySQL コンテナの初回起動時に自動で作成されます）を使うため、開発用のデータには影響しません。
+
 ## 使用技術（実行環境）
 
 - PHP 8.2
