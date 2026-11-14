@@ -3,7 +3,9 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -21,6 +23,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'admin_status',
     ];
 
     /**
@@ -41,5 +44,49 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
+        'admin_status' => 'boolean',
     ];
+
+    /**
+     * ユーザーの勤怠
+     */
+    public function attendanceRecords(): HasMany
+    {
+        return $this->hasMany(AttendanceRecord::class);
+    }
+
+    /**
+     * ユーザーの修正申請
+     */
+    public function applications(): HasMany
+    {
+        return $this->hasMany(Application::class);
+    }
+
+    /**
+     * 今日の勤怠状況（勤務外／出勤中／休憩中／退勤済）
+     */
+    protected function attendanceStatus(): Attribute
+    {
+        return Attribute::get(function (): string {
+            $todayRecord = $this->attendanceRecords()
+                ->with('breaks')
+                ->whereDate('date', today())
+                ->first();
+
+            if (is_null($todayRecord)) {
+                return '勤務外';
+            }
+
+            if (! is_null($todayRecord->clock_out)) {
+                return '退勤済';
+            }
+
+            if ($todayRecord->breaks->contains(fn (AttendanceBreak $break) => is_null($break->break_out))) {
+                return '休憩中';
+            }
+
+            return '出勤中';
+        });
+    }
 }
