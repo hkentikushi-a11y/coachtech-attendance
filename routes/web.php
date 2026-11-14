@@ -43,4 +43,5 @@ Route::middleware('auth')->group(function () {
 // 管理者
 Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::get('/attendance/list', [AdminAttendanceController::class, 'index']);
+    Route::get('/attendance/{id}', [AdminAttendanceController::class, 'show'])->whereNumber('id');
 });

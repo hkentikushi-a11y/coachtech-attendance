@@ -27,6 +27,18 @@ class AttendancePresenter
     }
 
     /**
+     * クエリの日付（YYYY-MM-DD）を日付にする。指定がない・不正な場合は今日
+     */
+    public static function dayFromQuery(?string $value): Carbon
+    {
+        if (blank($value)) {
+            return today();
+        }
+
+        return rescue(fn () => Carbon::createFromFormat('!Y-m-d', $value), today(), false);
+    }
+
+    /**
      * クエリの年月（YYYY-MM）を月初の日付にする。指定がない・不正な場合は今月
      */
     public static function monthFromQuery(?string $value): Carbon

@@ -5,20 +5,18 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\AttendanceRecord;
 use App\Models\User;
+use App\Services\AttendancePresenter;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
 
 class AttendanceController extends Controller
 {
     /**
-     * その日の全ユーザーの勤怠一覧を表示する（?date=YYYY-MM-DD で日を切り替える。不正な値は今日として扱う）
+     * その日の全ユーザーの勤怠一覧を表示する（?date=YYYY-MM-DD で日を切り替える）
      */
     public function index(Request $request): View
     {
-        $date = $request->filled('date')
-            ? rescue(fn () => Carbon::createFromFormat('!Y-m-d', $request->query('date')), today(), false)
-            : today();
+        $date = AttendancePresenter::dayFromQuery($request->query('date'));
 
         return view('admin.admin-attendance-list', [
             'date' => $date,
@@ -26,6 +24,19 @@ class AttendanceController extends Controller
             'nextDay' => $date->copy()->addDay()->toDateString(),
             'users' => User::where('admin_status', false)->orderBy('id')->get(),
             'attendanceRecords' => AttendanceRecord::with('breaks')->whereDate('date', $date)->get(),
+        ]);
+    }
+
+    /**
+     * 勤怠詳細を表示する（修正は POST /attendance/{id} で直接反映する）
+     */
+    public function show(Request $request, int $id): View
+    {
+        $record = AttendanceRecord::with(['user', 'breaks'])->findOrFail($id);
+
+        return view('admin.admin-detail', [
+            'user' => $record->user,
+            'attendanceRecord' => AttendancePresenter::withOldInput(AttendancePresenter::detail($record), $request->old()),
         ]);
     }
 }
