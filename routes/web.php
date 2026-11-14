@@ -25,6 +25,7 @@ Route::post('/admin/logout', [AuthenticatedSessionController::class, 'destroy'])
 // 一般ユーザー
 Route::middleware(['auth', 'general'])->group(function () {
     Route::get('/attendance', [AttendanceController::class, 'index']);
+    Route::post('/attendance', [AttendanceController::class, 'store']);
 });
 
 // 管理者

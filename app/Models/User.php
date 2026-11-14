@@ -64,15 +64,23 @@ class User extends Authenticatable
     }
 
     /**
+     * 今日の勤怠（休憩を含む）。まだ出勤していない場合は null
+     */
+    public function todayAttendanceRecord(): ?AttendanceRecord
+    {
+        return $this->attendanceRecords()
+            ->with('breaks')
+            ->whereDate('date', today())
+            ->first();
+    }
+
+    /**
      * 今日の勤怠状況（勤務外／出勤中／休憩中／退勤済）
      */
     protected function attendanceStatus(): Attribute
     {
         return Attribute::get(function (): string {
-            $todayRecord = $this->attendanceRecords()
-                ->with('breaks')
-                ->whereDate('date', today())
-                ->first();
+            $todayRecord = $this->todayAttendanceRecord();
 
             if (is_null($todayRecord)) {
                 return '勤務外';
@@ -82,7 +90,7 @@ class User extends Authenticatable
                 return '退勤済';
             }
 
-            if ($todayRecord->breaks->contains(fn (AttendanceBreak $break) => is_null($break->break_out))) {
+            if (! is_null($todayRecord->openBreak())) {
                 return '休憩中';
             }
 

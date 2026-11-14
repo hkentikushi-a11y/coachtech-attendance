@@ -60,6 +60,14 @@ class AttendanceRecord extends Model
     }
 
     /**
+     * 終了していない（休憩中の）休憩。休憩中でなければ null
+     */
+    public function openBreak(): ?AttendanceBreak
+    {
+        return $this->breaks->first(fn (AttendanceBreak $break) => is_null($break->break_out));
+    }
+
+    /**
      * 休憩時間の合計（分）。終了していない休憩は含めない
      */
     public function breakMinutes(): int
