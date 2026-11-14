@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -63,5 +64,21 @@ class Application extends Model
     public function proposalBreaks(): HasMany
     {
         return $this->hasMany(ProposalBreak::class);
+    }
+
+    /**
+     * 申請の出勤時刻（HH:MM。提供 Blade がそのまま表示するため秒を除く）
+     */
+    protected function newClockIn(): Attribute
+    {
+        return Attribute::get(fn (?string $value) => is_null($value) ? null : substr($value, 0, 5));
+    }
+
+    /**
+     * 申請の退勤時刻（HH:MM。提供 Blade がそのまま表示するため秒を除く）
+     */
+    protected function newClockOut(): Attribute
+    {
+        return Attribute::get(fn (?string $value) => is_null($value) ? null : substr($value, 0, 5));
     }
 }

@@ -1,7 +1,9 @@
 <?php
 
+use App\Http\Controllers\Admin\ApplicationController as AdminApplicationController;
 use App\Http\Controllers\Admin\AttendanceController as AdminAttendanceController;
 use App\Http\Controllers\Admin\LoginController as AdminLoginController;
+use App\Http\Controllers\Admin\StaffController;
 use App\Http\Controllers\ApplicationController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\AttendanceDetailController;
@@ -41,7 +43,14 @@ Route::middleware('auth')->group(function () {
 });
 
 // 管理者
-Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
-    Route::get('/attendance/list', [AdminAttendanceController::class, 'index']);
-    Route::get('/attendance/{id}', [AdminAttendanceController::class, 'show'])->whereNumber('id');
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::prefix('admin')->group(function () {
+        Route::get('/attendance/list', [AdminAttendanceController::class, 'index']);
+        Route::get('/attendance/{id}', [AdminAttendanceController::class, 'show'])->whereNumber('id');
+        Route::get('/staff/list', [StaffController::class, 'index']);
+        Route::get('/attendance/staff/{id}', [AdminAttendanceController::class, 'staff'])->whereNumber('id');
+    });
+
+    Route::get('/stamp_correction_request/approve/{attendance_correct_request_id}', [AdminApplicationController::class, 'show'])->whereNumber('attendance_correct_request_id');
+    Route::post('/stamp_correction_request/approve/{attendance_correct_request_id}', [AdminApplicationController::class, 'approve'])->whereNumber('attendance_correct_request_id');
 });
