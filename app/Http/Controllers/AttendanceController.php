@@ -5,14 +5,13 @@ namespace App\Http\Controllers;
 use App\Http\Requests\AttendanceStampRequest;
 use App\Models\AttendanceRecord;
 use App\Models\User;
+use App\Services\AttendancePresenter;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class AttendanceController extends Controller
 {
-    private const WEEKDAYS = ['日', '月', '火', '水', '木', '金', '土'];
-
     /**
      * 勤怠登録画面を表示する
      */
@@ -22,7 +21,7 @@ class AttendanceController extends Controller
 
         return view('user.attendance-register', [
             'user' => $request->user(),
-            'formattedDate' => $now->format('Y年n月j日') . '(' . self::WEEKDAYS[$now->dayOfWeek] . ')',
+            'formattedDate' => $now->format('Y年n月j日') . '(' . AttendancePresenter::weekday($now) . ')',
             'formattedTime' => $now->format('H:i'),
         ]);
     }
@@ -46,6 +45,45 @@ class AttendanceController extends Controller
         };
 
         return redirect('/attendance');
+    }
+
+    /**
+     * 自分の月次勤怠一覧を表示する（?date=YYYY-MM で月を切り替える）
+     */
+    public function list(Request $request): View
+    {
+        $month = AttendancePresenter::monthFromQuery($request->query('date'));
+
+        $records = $request->user()
+            ->attendanceRecords()
+            ->with('breaks')
+            ->whereBetween('date', [$month->toDateString(), $month->copy()->endOfMonth()->toDateString()])
+            ->get();
+
+        return view('user.user-attendance-list', [
+            'date' => $month,
+            'previousMonth' => $month->copy()->subMonthNoOverflow()->format('Y-m'),
+            'nextMonth' => $month->copy()->addMonthNoOverflow()->format('Y-m'),
+            'formattedAttendanceRecords' => AttendancePresenter::monthlyRows($records, $month),
+        ]);
+    }
+
+    /**
+     * 自分の勤怠詳細を表示する。承認待ちの申請がある場合は申請内容を閲覧のみで表示する
+     */
+    public function show(Request $request, int $id): View
+    {
+        $record = AttendanceRecord::with('breaks')->findOrFail($id);
+
+        abort_unless($record->user_id === $request->user()->id, 403);
+
+        $pendingApplication = $record->pendingApplication();
+        $detail = AttendancePresenter::detail($record, $pendingApplication);
+
+        return view('user.user-detail', [
+            'user' => $request->user(),
+            'data' => $pendingApplication ? $detail : AttendancePresenter::withOldInput($detail, $request->old()),
+        ]);
     }
 
     /**

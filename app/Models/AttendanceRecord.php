@@ -60,6 +60,18 @@ class AttendanceRecord extends Model
     }
 
     /**
+     * 承認待ちの修正申請（申請の休憩を含む）。なければ null
+     */
+    public function pendingApplication(): ?Application
+    {
+        return $this->applications()
+            ->with('proposalBreaks')
+            ->where('approval_status', Application::STATUS_PENDING)
+            ->latest('id')
+            ->first();
+    }
+
+    /**
      * 終了していない（休憩中の）休憩。休憩中でなければ null
      */
     public function openBreak(): ?AttendanceBreak

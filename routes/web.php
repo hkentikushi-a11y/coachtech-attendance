@@ -2,7 +2,9 @@
 
 use App\Http\Controllers\Admin\AttendanceController as AdminAttendanceController;
 use App\Http\Controllers\Admin\LoginController as AdminLoginController;
+use App\Http\Controllers\ApplicationController;
 use App\Http\Controllers\AttendanceController;
+use App\Http\Controllers\AttendanceDetailController;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
 
@@ -26,6 +28,16 @@ Route::post('/admin/logout', [AuthenticatedSessionController::class, 'destroy'])
 Route::middleware(['auth', 'general'])->group(function () {
     Route::get('/attendance', [AttendanceController::class, 'index']);
     Route::post('/attendance', [AttendanceController::class, 'store']);
+    Route::get('/attendance/list', [AttendanceController::class, 'list']);
+    Route::get('/attendance/detail/{id}', [AttendanceController::class, 'show'])->whereNumber('id');
+    Route::get('/application/{id}', [ApplicationController::class, 'show'])->whereNumber('id');
+});
+
+// 一般ユーザー・管理者で共通（提供 Blade が同じ URL を使うため、コントローラー内でロールにより処理を分ける）
+Route::middleware('auth')->group(function () {
+    Route::get('/attendance/{id}', [AttendanceDetailController::class, 'show'])->whereNumber('id');
+    Route::post('/attendance/{id}', [AttendanceDetailController::class, 'update'])->whereNumber('id');
+    Route::get('/stamp_correction_request/list', [ApplicationController::class, 'index']);
 });
 
 // 管理者
