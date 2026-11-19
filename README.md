@@ -66,6 +66,7 @@ cp .env.example .env
 - MySQL 8.4
 - Laravel Sail（Docker）
 - Laravel Fortify（認証）
+- Laravel Sanctum（公開 API のトークン認証）
 - Vite（フロントエンドのビルド）
 - Mailpit（開発用メールサーバー）
 - phpMyAdmin
@@ -94,3 +95,27 @@ cp .env.example .env
 | 管理者 | 管理者 | user3@example.com | password |
 
 いずれもメール認証済みです。
+
+## 公開 API（v1）
+
+| メソッド | URI | 認証 | 説明 |
+|---|---|---|---|
+| GET | /api/v1/attendance-records | 不要 | 勤怠一覧（`user_id`・`date`・`month`で絞り込み、`per_page`（既定 20・最大 100）・`page`でページネーション） |
+| GET | /api/v1/attendance-records/{attendanceRecord} | 不要 | 勤怠詳細（ユーザー・休憩・修正申請を含む） |
+| POST | /api/v1/attendance-records | Sanctum | 勤怠の登録（認証ユーザーの勤怠として登録） |
+| PUT / PATCH | /api/v1/attendance-records/{attendanceRecord} | Sanctum | 勤怠の更新（本人または管理者のみ） |
+| DELETE | /api/v1/attendance-records/{attendanceRecord} | Sanctum | 勤怠の削除（本人または管理者のみ） |
+
+書き込み系で使うトークンは、次のコマンドで発行できます（例：user1）。
+
+```bash
+./vendor/bin/sail artisan tinker --execute="echo App\Models\User::where('email', 'user1@example.com')->first()->createToken('api')->plainTextToken;"
+```
+
+発行したトークンは `Authorization: Bearer {トークン}` ヘッダで送ります。
+
+```bash
+curl -X POST http://localhost/api/v1/attendance-records \
+  -H "Authorization: Bearer {トークン}" -H "Content-Type: application/json" \
+  -d '{"date": "2026-12-01", "clock_in": "09:00:00", "clock_out": "18:00:00", "comment": "API から登録"}'
+```
