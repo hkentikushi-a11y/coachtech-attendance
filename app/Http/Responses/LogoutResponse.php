@@ -12,7 +12,10 @@ use Laravel\Fortify\Contracts\LogoutResponse as LogoutResponseContract;
 class LogoutResponse implements LogoutResponseContract
 {
     /**
-     * Create an HTTP response that represents the object.
+     * ログアウト後のリダイレクトを返す
+     *
+     * 引数の型はインターフェース（Responsable::toResponse）が宣言していないため、
+     * 実装側で Request 型を付けると互換性エラーになる。型は PHPDoc で示す
      *
      * @param  Request  $request
      */

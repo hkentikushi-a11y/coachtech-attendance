@@ -12,7 +12,10 @@ use Laravel\Fortify\Contracts\LoginResponse as LoginResponseContract;
 class LoginResponse implements LoginResponseContract
 {
     /**
-     * Create an HTTP response that represents the object.
+     * ログイン後のリダイレクトを返す
+     *
+     * 引数の型はインターフェース（Responsable::toResponse）が宣言していないため、
+     * 実装側で Request 型を付けると互換性エラーになる。型は PHPDoc で示す
      *
      * @param  Request  $request
      */

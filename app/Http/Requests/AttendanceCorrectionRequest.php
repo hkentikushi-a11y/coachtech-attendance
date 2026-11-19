@@ -83,29 +83,38 @@ class AttendanceCorrectionRequest extends FormRequest
                 return;
             }
 
-            foreach ($this->breakInputs() as $index => [$breakIn, $breakOut]) {
-                if ($errors->hasAny(["new_break_in.{$index}", "new_break_out.{$index}"]) || (blank($breakIn) && blank($breakOut))) {
-                    continue;
-                }
-
-                if (blank($breakIn) || blank($breakOut)) {
-                    $errors->add("new_break_in.{$index}", self::BREAK_ERROR);
-
-                    continue;
-                }
-
-                $start = $this->toMinutes($breakIn);
-                $end = $this->toMinutes($breakOut);
-
-                if ($start < $clockIn || $start > $clockOut) {
-                    $errors->add("new_break_in.{$index}", self::BREAK_ERROR);
-                } elseif ($end > $clockOut) {
-                    $errors->add("new_break_out.{$index}", self::BREAK_END_ERROR);
-                } elseif ($start >= $end) {
-                    $errors->add("new_break_in.{$index}", self::BREAK_ERROR);
-                }
-            }
+            collect($this->breakInputs())
+                ->reject(fn (array $break, int $index) => $errors->hasAny(["new_break_in.{$index}", "new_break_out.{$index}"]))
+                ->map(fn (array $break, int $index) => $this->breakError($index, $break[0], $break[1], $clockIn, $clockOut))
+                ->filter()
+                ->each(fn (array $error) => $errors->add($error[0], $error[1]));
         });
+    }
+
+    /**
+     * 1行分の休憩の前後関係をチェックする
+     *
+     * @return array{0: string, 1: string}|null [エラーのキー, メッセージ]。問題がなければ null
+     */
+    private function breakError(int $index, ?string $breakIn, ?string $breakOut, int $clockIn, int $clockOut): ?array
+    {
+        if (blank($breakIn) && blank($breakOut)) {
+            return null;
+        }
+
+        if (blank($breakIn) || blank($breakOut)) {
+            return ["new_break_in.{$index}", self::BREAK_ERROR];
+        }
+
+        $start = $this->toMinutes($breakIn);
+        $end = $this->toMinutes($breakOut);
+
+        return match (true) {
+            $start < $clockIn || $start > $clockOut => ["new_break_in.{$index}", self::BREAK_ERROR],
+            $end > $clockOut => ["new_break_out.{$index}", self::BREAK_END_ERROR],
+            $start >= $end => ["new_break_in.{$index}", self::BREAK_ERROR],
+            default => null,
+        };
     }
 
     /**

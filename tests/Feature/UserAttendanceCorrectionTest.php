@@ -49,6 +49,11 @@ class UserAttendanceCorrectionTest extends TestCase
         ], $overrides);
     }
 
+    /**
+     * 勤怠詳細画面から修正申請を送信する
+     *
+     * @param  array<string, mixed>  $overrides
+     */
     private function submit(AttendanceRecord $record, array $overrides = []): TestResponse
     {
         return $this->actingAs($this->user)

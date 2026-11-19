@@ -26,6 +26,9 @@ class AttendanceStatusTest extends TestCase
         $this->user = User::factory()->create();
     }
 
+    /**
+     * 勤怠登録画面に指定したステータスが表示されていることを確認する
+     */
     private function assertStatus(string $status): void
     {
         $this->actingAs($this->user)

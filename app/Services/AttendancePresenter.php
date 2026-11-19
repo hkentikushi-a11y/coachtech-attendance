@@ -122,11 +122,11 @@ class AttendancePresenter
 
         // エラーの表示位置（new_break_in.{行番号}）がずれないよう、行番号は保ったまま末尾の空行だけを除く
         $breaks = collect(range(0, max(array_keys($breakIns + $breakOuts + [0 => null]))))
-            ->map(fn (int $index) => ['break_in' => $breakIns[$index] ?? '', 'break_out' => $breakOuts[$index] ?? '']);
-
-        while ($breaks->isNotEmpty() && blank($breaks->last()['break_in']) && blank($breaks->last()['break_out'])) {
-            $breaks->pop();
-        }
+            ->map(fn (int $index) => ['break_in' => $breakIns[$index] ?? '', 'break_out' => $breakOuts[$index] ?? ''])
+            ->reverse()
+            ->skipWhile(fn (array $break) => blank($break['break_in']) && blank($break['break_out']))
+            ->reverse()
+            ->values();
 
         return [
             ...$detail,

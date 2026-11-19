@@ -27,6 +27,9 @@ class BreakTest extends TestCase
         $this->actingAs($this->user);
     }
 
+    /**
+     * 打刻する（勤怠登録画面へ戻ることも確認する）
+     */
     private function stamp(string $action): void
     {
         $this->post('/attendance', ['action' => $action])->assertRedirect('/attendance');
