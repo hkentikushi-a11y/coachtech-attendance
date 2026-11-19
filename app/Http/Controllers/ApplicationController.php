@@ -11,6 +11,9 @@ class ApplicationController extends Controller
 {
     /**
      * 申請一覧を表示する（一般ユーザーは自分の申請、管理者は全ユーザーの申請）
+     *
+     * @param  Request  $request  リクエスト
+     * @return View 表示する画面
      */
     public function index(Request $request): View
     {
@@ -41,6 +44,10 @@ class ApplicationController extends Controller
 
     /**
      * 申請の「詳細」リンク。申請の対象の勤怠詳細画面へ移す
+     *
+     * @param  Request  $request  リクエスト
+     * @param  int  $id  修正申請ID
+     * @return RedirectResponse リダイレクトレスポンス
      */
     public function show(Request $request, int $id): RedirectResponse
     {

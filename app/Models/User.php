@@ -49,6 +49,8 @@ class User extends Authenticatable implements MustVerifyEmail
 
     /**
      * ユーザーの勤怠
+     *
+     * @return HasMany<AttendanceRecord> ユーザーの勤怠（1対多）
      */
     public function attendanceRecords(): HasMany
     {
@@ -57,6 +59,8 @@ class User extends Authenticatable implements MustVerifyEmail
 
     /**
      * ユーザーの修正申請
+     *
+     * @return HasMany<Application> ユーザーの修正申請（1対多）
      */
     public function applications(): HasMany
     {
@@ -65,6 +69,8 @@ class User extends Authenticatable implements MustVerifyEmail
 
     /**
      * 今日の勤怠（休憩を含む）。まだ出勤していない場合は null
+     *
+     * @return ?AttendanceRecord 今日の勤怠（まだ出勤していなければ null）
      */
     public function todayAttendanceRecord(): ?AttendanceRecord
     {
@@ -76,6 +82,8 @@ class User extends Authenticatable implements MustVerifyEmail
 
     /**
      * 今日の勤怠状況（勤務外／出勤中／休憩中／退勤済）
+     *
+     * @return Attribute 今日の勤怠状況を返すアクセサ
      */
     protected function attendanceStatus(): Attribute
     {

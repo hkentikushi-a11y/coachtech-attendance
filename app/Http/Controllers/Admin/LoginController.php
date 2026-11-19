@@ -12,6 +12,8 @@ class LoginController extends Controller
 {
     /**
      * 管理者ログイン画面を表示する
+     *
+     * @return View 表示する画面
      */
     public function create(): View
     {

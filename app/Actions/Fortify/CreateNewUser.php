@@ -15,6 +15,7 @@ class CreateNewUser implements CreatesNewUsers
      * Validate and create a newly registered user.
      *
      * @param  array<string, string>  $input
+     * @return User 作成したユーザー
      *
      * @throws ValidationException
      */

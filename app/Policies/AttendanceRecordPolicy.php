@@ -12,6 +12,10 @@ class AttendanceRecordPolicy
 {
     /**
      * 管理者はすべての操作を許可する（null を返すと各メソッドの判定に進む）
+     *
+     * @param  User  $user  ログインユーザー
+     * @param  string  $ability  実行しようとしている操作
+     * @return ?bool 管理者なら true、それ以外は null（各メソッドの判定に進む）
      */
     public function before(User $user, string $ability): ?bool
     {
@@ -20,6 +24,10 @@ class AttendanceRecordPolicy
 
     /**
      * 勤怠を更新できるか（本人のみ）
+     *
+     * @param  User  $user  ログインユーザー
+     * @param  AttendanceRecord  $attendanceRecord  対象の勤怠
+     * @return bool 更新を許可するなら true
      */
     public function update(User $user, AttendanceRecord $attendanceRecord): bool
     {
@@ -28,6 +36,10 @@ class AttendanceRecordPolicy
 
     /**
      * 勤怠を削除できるか（本人のみ）
+     *
+     * @param  User  $user  ログインユーザー
+     * @param  AttendanceRecord  $attendanceRecord  対象の勤怠
+     * @return bool 削除を許可するなら true
      */
     public function delete(User $user, AttendanceRecord $attendanceRecord): bool
     {

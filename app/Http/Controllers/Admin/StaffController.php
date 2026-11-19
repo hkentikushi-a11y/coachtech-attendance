@@ -10,6 +10,8 @@ class StaffController extends Controller
 {
     /**
      * 全一般ユーザーの氏名とメールアドレスを表示する
+     *
+     * @return View 表示する画面
      */
     public function index(): View
     {

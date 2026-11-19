@@ -15,6 +15,8 @@ class EnsureUserIsGeneral
      * Handle an incoming request.
      *
      * @param  Closure(Request): (Response)  $next
+     * @param  Request  $request  リクエスト
+     * @return Response 次の処理のレスポンス、または管理者の勤怠一覧へのリダイレクト
      */
     public function handle(Request $request, Closure $next): Response
     {

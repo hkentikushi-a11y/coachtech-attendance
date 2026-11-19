@@ -27,7 +27,7 @@ class AdminAttendanceListTest extends TestCase
         parent::setUp();
 
         $this->travelTo(Carbon::parse('2026-11-11 20:00:00'));
-        $this->admin = User::factory()->admin()->create();
+        $this->admin = User::factory()->admin()->create(['name' => '管理 者']);
         $this->first = User::factory()->create(['name' => '一番 太郎']);
         $this->second = User::factory()->create(['name' => '二番 花子']);
     }
@@ -38,11 +38,12 @@ class AdminAttendanceListTest extends TestCase
         AttendanceBreak::factory()->for($record)->create(['break_in' => '12:00:00', 'break_out' => '13:00:00']);
         AttendanceRecord::factory()->for($this->second)->create(['clock_in' => '10:00:00', 'clock_out' => '19:30:00']);
         AttendanceRecord::factory()->for($this->second)->create(['date' => '2026-11-10', 'clock_in' => '07:07:00']);
+        AttendanceRecord::factory()->for($this->admin)->create(['clock_in' => '08:10:00', 'clock_out' => '17:10:00']);
 
         $response = $this->actingAs($this->admin)->get('/admin/attendance/list');
 
-        // 名前・出勤・退勤・休憩・合計
-        $response->assertSeeInOrder(['一番 太郎', '09:00', '18:00', '1:00', '8:00', '二番 花子', '10:00', '19:30', '0:00', '9:30']);
+        // 名前・出勤・退勤・休憩・合計（「全ユーザー」なので勤怠のある管理者も含む）
+        $response->assertSeeInOrder(['管理 者', '08:10', '17:10', '0:00', '9:00', '一番 太郎', '09:00', '18:00', '1:00', '8:00', '二番 花子', '10:00', '19:30', '0:00', '9:30']);
         $response->assertDontSee('07:07');
     }
 

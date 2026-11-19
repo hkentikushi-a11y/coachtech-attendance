@@ -16,6 +16,7 @@ class AttendanceRecordResource extends JsonResource
     /**
      * Transform the resource into an array.
      *
+     * @param  Request  $request  リクエスト
      * @return array<string, mixed>
      */
     public function toArray(Request $request): array
@@ -25,6 +26,7 @@ class AttendanceRecordResource extends JsonResource
         return [
             'id' => $this->id,
             'user_id' => $this->user_id,
+            'user_name' => $this->whenLoaded('user', fn () => $this->user->name),
             'user' => new UserResource($this->whenLoaded('user')),
             'date' => $this->date->toDateString(),
             'clock_in' => $this->clock_in,
@@ -39,6 +41,9 @@ class AttendanceRecordResource extends JsonResource
 
     /**
      * 分を HH:MM 形式にする（API 仕様書のレスポンス例に合わせてゼロ埋めする）
+     *
+     * @param  int  $minutes  時間（分）
+     * @return string HH:MM 形式の文字列（例：08:00）
      */
     private static function formatMinutes(int $minutes): string
     {

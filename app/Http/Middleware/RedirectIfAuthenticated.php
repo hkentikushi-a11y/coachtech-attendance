@@ -14,6 +14,9 @@ class RedirectIfAuthenticated
      * ログイン済みのユーザーがログイン画面などを開いた場合、ロールに応じたトップ画面へ移す
      *
      * @param  Closure(Request): (Response)  $next
+     * @param  Request  $request  リクエスト
+     * @param  string[]  $guards  確認する認証ガード
+     * @return Response 次の処理のレスポンス、またはロールに応じたトップ画面へのリダイレクト
      */
     public function handle(Request $request, Closure $next, string ...$guards): Response
     {

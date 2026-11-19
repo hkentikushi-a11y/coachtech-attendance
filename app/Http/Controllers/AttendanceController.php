@@ -14,6 +14,9 @@ class AttendanceController extends Controller
 {
     /**
      * 勤怠登録画面を表示する
+     *
+     * @param  Request  $request  リクエスト
+     * @return View 表示する画面
      */
     public function index(Request $request): View
     {
@@ -30,6 +33,9 @@ class AttendanceController extends Controller
      * 出勤・休憩入・休憩戻・退勤を打刻する
      *
      * 現在のステータスで押せない打刻（退勤済みでの出勤など）は何もせずに戻る
+     *
+     * @param  AttendanceStampRequest  $request  打刻の種類（検証済み）
+     * @return RedirectResponse リダイレクトレスポンス
      */
     public function store(AttendanceStampRequest $request): RedirectResponse
     {
@@ -49,6 +55,9 @@ class AttendanceController extends Controller
 
     /**
      * 自分の月次勤怠一覧を表示する（?date=YYYY-MM で月を切り替える）
+     *
+     * @param  Request  $request  リクエスト
+     * @return View 表示する画面
      */
     public function list(Request $request): View
     {
@@ -70,6 +79,10 @@ class AttendanceController extends Controller
 
     /**
      * 自分の勤怠詳細を表示する。承認待ちの申請がある場合は申請内容を閲覧のみで表示する
+     *
+     * @param  Request  $request  リクエスト
+     * @param  int  $id  勤怠ID
+     * @return View 表示する画面
      */
     public function show(Request $request, int $id): View
     {
@@ -88,6 +101,10 @@ class AttendanceController extends Controller
 
     /**
      * 出勤（勤務外のときのみ。1日1回）
+     *
+     * @param  User  $user  ユーザー
+     * @param  ?AttendanceRecord  $record  今日の勤怠（なければ null）
+     * @param  string  $time  打刻する時刻（HH:MM:SS）
      */
     private function clockIn(User $user, ?AttendanceRecord $record, string $time): void
     {
@@ -103,6 +120,9 @@ class AttendanceController extends Controller
 
     /**
      * 休憩入（出勤中のときのみ。1日に何回でも）
+     *
+     * @param  ?AttendanceRecord  $record  今日の勤怠（なければ null）
+     * @param  string  $time  打刻する時刻（HH:MM:SS）
      */
     private function breakIn(?AttendanceRecord $record, string $time): void
     {
@@ -115,6 +135,9 @@ class AttendanceController extends Controller
 
     /**
      * 休憩戻（休憩中のときのみ）
+     *
+     * @param  ?AttendanceRecord  $record  今日の勤怠（なければ null）
+     * @param  string  $time  打刻する時刻（HH:MM:SS）
      */
     private function breakOut(?AttendanceRecord $record, string $time): void
     {
@@ -123,6 +146,9 @@ class AttendanceController extends Controller
 
     /**
      * 退勤（出勤中のときのみ。1日1回）
+     *
+     * @param  ?AttendanceRecord  $record  今日の勤怠（なければ null）
+     * @param  string  $time  打刻する時刻（HH:MM:SS）
      */
     private function clockOut(?AttendanceRecord $record, string $time): void
     {
@@ -135,6 +161,9 @@ class AttendanceController extends Controller
 
     /**
      * 出勤中（出勤済み・未退勤・休憩中でない）かどうか
+     *
+     * @param  ?AttendanceRecord  $record  今日の勤怠（なければ null）
+     * @return bool 出勤中なら true
      */
     private function isWorking(?AttendanceRecord $record): bool
     {

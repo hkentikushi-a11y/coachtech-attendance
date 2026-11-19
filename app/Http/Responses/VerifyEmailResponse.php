@@ -20,6 +20,7 @@ class VerifyEmailResponse implements VerifyEmailResponseContract
      * 実装側で Request 型を付けると互換性エラーになる。型は PHPDoc で示す
      *
      * @param  Request  $request
+     * @return RedirectResponse 勤怠登録画面へのリダイレクト
      */
     public function toResponse($request): RedirectResponse
     {

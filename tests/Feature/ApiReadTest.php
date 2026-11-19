@@ -32,6 +32,7 @@ class ApiReadTest extends TestCase
             ->assertJsonPath('meta.last_page', 2)
             ->assertJsonPath('meta.per_page', 20)
             ->assertJsonPath('meta.total', 25)
+            ->assertJsonPath('data.0.user_name', $user->name)
             ->assertJsonCount(20, 'data');
     }
 

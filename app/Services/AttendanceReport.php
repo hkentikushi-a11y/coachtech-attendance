@@ -31,6 +31,7 @@ class AttendanceReport
 
     /**
      * @param  Collection<int, AttendanceRecord>  $records  集計期間内の退勤済みの勤怠（breaks を eager load 済み）
+     * @param  CarbonInterface  $today  基準日（今日）
      */
     public function __construct(
         private readonly Collection $records,
@@ -39,6 +40,10 @@ class AttendanceReport
 
     /**
      * ユーザーの集計期間（5ヶ月前の月初〜当月末）の退勤済みの勤怠を取得してレポートを作る
+     *
+     * @param  User  $user  集計するユーザー
+     * @param  CarbonInterface  $today  基準日（今日）
+     * @return self ユーザーのレポート
      */
     public static function forUser(User $user, CarbonInterface $today): self
     {
@@ -53,6 +58,9 @@ class AttendanceReport
 
     /**
      * 集計期間の初日（5ヶ月前の月初）
+     *
+     * @param  CarbonInterface  $today  基準日（今日）
+     * @return CarbonInterface 集計期間の初日
      */
     public static function periodStart(CarbonInterface $today): CarbonInterface
     {
@@ -130,6 +138,7 @@ class AttendanceReport
      * 残業時間の合計（分）。1日ごとに所定労働時間を超えた分を足す
      *
      * @param  Collection<int, int>  $workMinutes
+     * @return int 残業時間の合計（分）
      */
     private function overtimeMinutes(Collection $workMinutes): int
     {

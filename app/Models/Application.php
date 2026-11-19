@@ -44,6 +44,8 @@ class Application extends Model
 
     /**
      * 申請したユーザー
+     *
+     * @return BelongsTo<User, Application> 申請したユーザー（多対1）
      */
     public function user(): BelongsTo
     {
@@ -52,6 +54,8 @@ class Application extends Model
 
     /**
      * 申請の対象の勤怠
+     *
+     * @return BelongsTo<AttendanceRecord, Application> 申請の対象の勤怠（多対1）
      */
     public function attendanceRecord(): BelongsTo
     {
@@ -60,6 +64,8 @@ class Application extends Model
 
     /**
      * 申請に含まれる休憩
+     *
+     * @return HasMany<ProposalBreak> 申請に含まれる休憩（1対多）
      */
     public function proposalBreaks(): HasMany
     {
@@ -68,6 +74,8 @@ class Application extends Model
 
     /**
      * 申請の出勤時刻（HH:MM。提供 Blade がそのまま表示するため秒を除く）
+     *
+     * @return Attribute 申請の出勤時刻（HH:MM）を返すアクセサ
      */
     protected function newClockIn(): Attribute
     {
@@ -76,6 +84,8 @@ class Application extends Model
 
     /**
      * 申請の退勤時刻（HH:MM。提供 Blade がそのまま表示するため秒を除く）
+     *
+     * @return Attribute 申請の退勤時刻（HH:MM）を返すアクセサ
      */
     protected function newClockOut(): Attribute
     {

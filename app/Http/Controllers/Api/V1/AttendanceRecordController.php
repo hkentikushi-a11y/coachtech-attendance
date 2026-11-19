@@ -21,6 +21,9 @@ class AttendanceRecordController extends Controller
 {
     /**
      * 勤怠一覧を返す（user_id・date・month で絞り込み、per_page・page でページネーション）
+     *
+     * @param  IndexAttendanceRecordRequest  $request  検索条件（検証済み）
+     * @return AnonymousResourceCollection ページネーション付きの勤怠一覧（data・links・meta）
      */
     public function index(IndexAttendanceRecordRequest $request): AnonymousResourceCollection
     {
@@ -42,6 +45,9 @@ class AttendanceRecordController extends Controller
 
     /**
      * 勤怠詳細（ユーザー・休憩・修正申請を含む）を返す。存在しない ID は 404
+     *
+     * @param  AttendanceRecord  $attendanceRecord  対象の勤怠
+     * @return AttendanceRecordResource 勤怠の JSON
      */
     public function show(AttendanceRecord $attendanceRecord): AttendanceRecordResource
     {
@@ -50,6 +56,9 @@ class AttendanceRecordController extends Controller
 
     /**
      * 認証ユーザーの勤怠を登録し、201 で返す
+     *
+     * @param  StoreAttendanceRecordRequest  $request  登録内容（検証済み）
+     * @return JsonResponse 201 Created と登録した勤怠の JSON
      */
     public function store(StoreAttendanceRecordRequest $request): JsonResponse
     {
@@ -62,6 +71,10 @@ class AttendanceRecordController extends Controller
 
     /**
      * 勤怠を更新する（送信された項目のみ。本人または管理者のみ）
+     *
+     * @param  UpdateAttendanceRecordRequest  $request  更新内容（検証済み）
+     * @param  AttendanceRecord  $attendanceRecord  対象の勤怠
+     * @return AttendanceRecordResource 勤怠の JSON
      */
     public function update(UpdateAttendanceRecordRequest $request, AttendanceRecord $attendanceRecord): AttendanceRecordResource
     {
@@ -74,6 +87,9 @@ class AttendanceRecordController extends Controller
 
     /**
      * 勤怠を削除し、204 を返す（休憩・修正申請も連鎖して削除される。本人または管理者のみ）
+     *
+     * @param  AttendanceRecord  $attendanceRecord  対象の勤怠
+     * @return Response 204 No Content
      */
     public function destroy(AttendanceRecord $attendanceRecord): Response
     {

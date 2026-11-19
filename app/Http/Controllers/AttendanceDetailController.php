@@ -16,6 +16,10 @@ class AttendanceDetailController extends Controller
 {
     /**
      * 一覧の「詳細」リンク。ロールに応じた勤怠詳細画面へ移す
+     *
+     * @param  Request  $request  リクエスト
+     * @param  int  $id  勤怠ID
+     * @return RedirectResponse リダイレクトレスポンス
      */
     public function show(Request $request, int $id): RedirectResponse
     {
@@ -24,6 +28,10 @@ class AttendanceDetailController extends Controller
 
     /**
      * 勤怠の修正。一般ユーザーは修正申請を作成し、管理者は勤怠を直接修正する
+     *
+     * @param  AttendanceCorrectionRequest  $request  修正内容（検証済み）
+     * @param  int  $id  勤怠ID
+     * @return RedirectResponse リダイレクトレスポンス
      */
     public function update(AttendanceCorrectionRequest $request, int $id): RedirectResponse
     {
@@ -48,6 +56,9 @@ class AttendanceDetailController extends Controller
 
     /**
      * 修正申請と申請の休憩を作成する
+     *
+     * @param  AttendanceRecord  $record  対象の勤怠
+     * @param  AttendanceCorrectionRequest  $request  修正内容（検証済み）
      */
     private function createApplication(AttendanceRecord $record, AttendanceCorrectionRequest $request): void
     {
@@ -68,6 +79,9 @@ class AttendanceDetailController extends Controller
 
     /**
      * 勤怠と休憩を入力内容で上書きする（管理者）
+     *
+     * @param  AttendanceRecord  $record  対象の勤怠
+     * @param  AttendanceCorrectionRequest  $request  修正内容（検証済み）
      */
     private function correctDirectly(AttendanceRecord $record, AttendanceCorrectionRequest $request): void
     {

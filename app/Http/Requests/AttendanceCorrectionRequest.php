@@ -19,6 +19,8 @@ class AttendanceCorrectionRequest extends FormRequest
 
     /**
      * Determine if the user is authorized to make this request.
+     *
+     * @return bool 常に true（ロールの判定はミドルウェアや Policy で行う）
      */
     public function authorize(): bool
     {
@@ -64,6 +66,8 @@ class AttendanceCorrectionRequest extends FormRequest
 
     /**
      * 出勤・退勤・休憩の前後関係をチェックする
+     *
+     * @param  Validator  $validator  バリデータ
      */
     public function withValidator(Validator $validator): void
     {
@@ -94,6 +98,11 @@ class AttendanceCorrectionRequest extends FormRequest
     /**
      * 1行分の休憩の前後関係をチェックする
      *
+     * @param  int  $index  休憩の行番号
+     * @param  ?string  $breakIn  休憩開始時刻（HH:MM）
+     * @param  ?string  $breakOut  休憩終了時刻（HH:MM）
+     * @param  int  $clockIn  出勤時刻（0時からの分）
+     * @param  int  $clockOut  退勤時刻（0時からの分）
      * @return array{0: string, 1: string}|null [エラーのキー, メッセージ]。問題がなければ null
      */
     private function breakError(int $index, ?string $breakIn, ?string $breakOut, int $clockIn, int $clockOut): ?array
@@ -149,6 +158,9 @@ class AttendanceCorrectionRequest extends FormRequest
 
     /**
      * HH:MM を 0 時からの分にする
+     *
+     * @param  string  $time  時刻（HH:MM）
+     * @return int 0時からの分
      */
     private function toMinutes(string $time): int
     {

@@ -20,6 +20,9 @@ class AttendancePresenter
 
     /**
      * 曜日（日〜土）
+     *
+     * @param  CarbonInterface  $date  日付
+     * @return string 曜日（日〜土）
      */
     public static function weekday(CarbonInterface $date): string
     {
@@ -28,6 +31,9 @@ class AttendancePresenter
 
     /**
      * クエリの日付（YYYY-MM-DD）を日付にする。指定がない・不正な場合は今日
+     *
+     * @param  ?string  $value  クエリの日付（YYYY-MM-DD）
+     * @return Carbon 指定した日（指定がない・不正な場合は今日）
      */
     public static function dayFromQuery(?string $value): Carbon
     {
@@ -40,6 +46,9 @@ class AttendancePresenter
 
     /**
      * クエリの年月（YYYY-MM）を月初の日付にする。指定がない・不正な場合は今月
+     *
+     * @param  ?string  $value  クエリの年月（YYYY-MM）
+     * @return Carbon 指定した月の月初（指定がない・不正な場合は今月）
      */
     public static function monthFromQuery(?string $value): Carbon
     {
@@ -54,6 +63,7 @@ class AttendancePresenter
      * 月次勤怠一覧の行（その月の全日分。勤怠がない日は空欄）
      *
      * @param  Collection<int, AttendanceRecord>  $records  breaks を eager load した、その月の勤怠
+     * @param  CarbonInterface  $month  表示する月
      * @return array<int, array<string, int|string|null>>
      */
     public static function monthlyRows(Collection $records, CarbonInterface $month): array
@@ -80,6 +90,8 @@ class AttendancePresenter
     /**
      * 勤怠詳細画面のデータ。承認待ちの申請がある場合は申請内容を表示する
      *
+     * @param  AttendanceRecord  $record  対象の勤怠
+     * @param  ?Application  $pendingApplication  承認待ちの修正申請（なければ null）
      * @return array<string, mixed>
      */
     public static function detail(AttendanceRecord $record, ?Application $pendingApplication = null): array
@@ -139,6 +151,9 @@ class AttendancePresenter
 
     /**
      * 時刻（HH:MM:SS）を HH:MM にする。null は空文字
+     *
+     * @param  ?string  $time  時刻（HH:MM:SS）
+     * @return string HH:MM 形式の時刻（null の場合は空文字）
      */
     public static function time(?string $time): string
     {

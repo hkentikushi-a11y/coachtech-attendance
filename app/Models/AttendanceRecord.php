@@ -37,6 +37,8 @@ class AttendanceRecord extends Model
 
     /**
      * 勤怠のユーザー
+     *
+     * @return BelongsTo<User, AttendanceRecord> 勤怠のユーザー（多対1）
      */
     public function user(): BelongsTo
     {
@@ -45,6 +47,8 @@ class AttendanceRecord extends Model
 
     /**
      * 勤怠の休憩
+     *
+     * @return HasMany<AttendanceBreak> 勤怠の休憩（1対多）
      */
     public function breaks(): HasMany
     {
@@ -53,6 +57,8 @@ class AttendanceRecord extends Model
 
     /**
      * 勤怠に対する修正申請
+     *
+     * @return HasMany<Application> 勤怠に対する修正申請（1対多）
      */
     public function applications(): HasMany
     {
@@ -61,6 +67,8 @@ class AttendanceRecord extends Model
 
     /**
      * 承認待ちの修正申請（申請の休憩を含む）。なければ null
+     *
+     * @return ?Application 承認待ちの修正申請（なければ null）
      */
     public function pendingApplication(): ?Application
     {
@@ -73,6 +81,8 @@ class AttendanceRecord extends Model
 
     /**
      * 終了していない（休憩中の）休憩。休憩中でなければ null
+     *
+     * @return ?AttendanceBreak 休憩中の休憩（休憩中でなければ null）
      */
     public function openBreak(): ?AttendanceBreak
     {
@@ -81,6 +91,8 @@ class AttendanceRecord extends Model
 
     /**
      * 休憩時間の合計（分）。終了していない休憩は含めない
+     *
+     * @return int 休憩時間の合計（分）
      */
     public function breakMinutes(): int
     {
@@ -91,6 +103,8 @@ class AttendanceRecord extends Model
 
     /**
      * 労働時間（分）。退勤していない場合は null
+     *
+     * @return ?int 労働時間（分）。退勤していない場合は null
      */
     public function workMinutes(): ?int
     {
@@ -103,6 +117,8 @@ class AttendanceRecord extends Model
 
     /**
      * 休憩時間の合計（例：1:00）
+     *
+     * @return Attribute 休憩時間の合計を返すアクセサ
      */
     protected function totalBreakTime(): Attribute
     {
@@ -111,6 +127,8 @@ class AttendanceRecord extends Model
 
     /**
      * 勤務時間の合計（例：8:00）。退勤していない場合は null
+     *
+     * @return Attribute 勤務時間の合計を返すアクセサ
      */
     protected function totalTime(): Attribute
     {
@@ -123,6 +141,9 @@ class AttendanceRecord extends Model
 
     /**
      * 分を「時:分」形式の文字列にする
+     *
+     * @param  int  $minutes  時間（分）
+     * @return string 「時:分」形式の文字列（例：8:00）
      */
     private static function formatMinutes(int $minutes): string
     {

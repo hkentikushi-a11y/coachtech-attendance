@@ -29,6 +29,8 @@ class EventServiceProvider extends ServiceProvider
 
     /**
      * Determine if events and listeners should be automatically discovered.
+     *
+     * @return bool イベントとリスナーを自動で検出するなら true
      */
     public function shouldDiscoverEvents(): bool
     {

@@ -23,6 +23,8 @@ class ProposalBreak extends Model
 
     /**
      * 休憩が属する修正申請
+     *
+     * @return BelongsTo<Application, ProposalBreak> 休憩が属する修正申請（多対1）
      */
     public function application(): BelongsTo
     {

@@ -59,6 +59,8 @@ class Handler extends ExceptionHandler
      * 引数 $request の型は親クラスのメソッドが宣言していないため、型を付けると互換性エラーになる。型は PHPDoc で示す
      *
      * @param  Request  $request
+     * @param  Throwable  $e  発生した例外
+     * @return bool JSON で返すなら true
      */
     protected function shouldReturnJson($request, Throwable $e): bool
     {

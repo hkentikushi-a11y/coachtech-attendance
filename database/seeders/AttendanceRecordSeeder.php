@@ -13,12 +13,13 @@ use Illuminate\Support\Collection;
 class AttendanceRecordSeeder extends Seeder
 {
     /**
-     * 一般ユーザーの勤怠と休憩を作成する
+     * 全ユーザー（一般ユーザー・管理者）の勤怠と休憩を作成する
      */
     public function run(): void
     {
         $this->seedReportData(User::where('email', 'user1@example.com')->firstOrFail());
         $this->seedDailyData(User::where('email', 'user2@example.com')->firstOrFail());
+        $this->seedDailyData(User::where('email', 'user3@example.com')->firstOrFail());
     }
 
     /**
@@ -52,9 +53,11 @@ class AttendanceRecordSeeder extends Seeder
     }
 
     /**
-     * 実運用に近い日々のデータ（user2）
+     * 実運用に近い日々のデータ（user2・user3）
      *
      * 3ヶ月前の月初から昨日までの平日。出退勤時刻は日付から決まる値で少しずつずらす
+     *
+     * @param  User  $user  勤怠を作成するユーザー
      */
     private function seedDailyData(User $user): void
     {

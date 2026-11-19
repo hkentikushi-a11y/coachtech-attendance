@@ -18,6 +18,9 @@ class AttendanceController extends Controller
 
     /**
      * その日の全ユーザーの勤怠一覧を表示する（?date=YYYY-MM-DD で日を切り替える）
+     *
+     * @param  Request  $request  リクエスト
+     * @return View 表示する画面
      */
     public function index(Request $request): View
     {
@@ -27,13 +30,18 @@ class AttendanceController extends Controller
             'date' => $date,
             'previousDay' => $date->copy()->subDay()->toDateString(),
             'nextDay' => $date->copy()->addDay()->toDateString(),
-            'users' => User::where('admin_status', false)->orderBy('id')->get(),
+            // FN034「その日になされた全ユーザーの勤怠情報」のため管理者も含める（勤怠がないユーザーの行は Blade 側で表示しない）
+            'users' => User::orderBy('id')->get(),
             'attendanceRecords' => AttendanceRecord::with('breaks')->whereDate('date', $date)->get(),
         ]);
     }
 
     /**
      * 選択したユーザーの月次勤怠一覧を表示する（?date=YYYY-MM で月を切り替える）
+     *
+     * @param  Request  $request  リクエスト
+     * @param  int  $id  ユーザーID
+     * @return View 表示する画面
      */
     public function staff(Request $request, int $id): View
     {
@@ -56,6 +64,10 @@ class AttendanceController extends Controller
 
     /**
      * 勤怠詳細を表示する（修正は POST /attendance/{id} で直接反映する）
+     *
+     * @param  Request  $request  リクエスト
+     * @param  int  $id  勤怠ID
+     * @return View 表示する画面
      */
     public function show(Request $request, int $id): View
     {
@@ -71,6 +83,9 @@ class AttendanceController extends Controller
      * 選択したユーザー・月の勤怠一覧を CSV でダウンロードさせる
      *
      * Excel で開いても文字化けしないよう、BOM 付きの UTF-8・改行 CRLF で出力する
+     *
+     * @param  AttendanceExportRequest  $request  出力するユーザーと年月（検証済み）
+     * @return StreamedResponse CSV のダウンロードレスポンス
      */
     public function export(AttendanceExportRequest $request): StreamedResponse
     {

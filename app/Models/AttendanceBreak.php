@@ -30,6 +30,8 @@ class AttendanceBreak extends Model
 
     /**
      * 休憩が属する勤怠
+     *
+     * @return BelongsTo<AttendanceRecord, AttendanceBreak> 休憩が属する勤怠（多対1）
      */
     public function attendanceRecord(): BelongsTo
     {

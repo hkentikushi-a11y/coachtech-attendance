@@ -10,6 +10,9 @@ class ReportController extends Controller
 {
     /**
      * ログインユーザーのマイ勤怠レポート（過去6ヶ月の基本サマリー・月次推移・当月の異常検知）を表示する
+     *
+     * @param  Request  $request  リクエスト
+     * @return View 表示する画面
      */
     public function index(Request $request): View
     {

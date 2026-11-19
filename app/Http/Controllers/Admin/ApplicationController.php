@@ -13,6 +13,9 @@ class ApplicationController extends Controller
 {
     /**
      * 修正申請の承認画面を表示する
+     *
+     * @param  int  $attendance_correct_request_id  修正申請ID
+     * @return View 表示する画面
      */
     public function show(int $attendance_correct_request_id): View
     {
@@ -26,6 +29,9 @@ class ApplicationController extends Controller
 
     /**
      * 修正申請を承認し、申請内容で勤怠と休憩を更新する（承認待ちの申請のみ）
+     *
+     * @param  int  $attendance_correct_request_id  修正申請ID
+     * @return RedirectResponse リダイレクトレスポンス
      */
     public function approve(int $attendance_correct_request_id): RedirectResponse
     {

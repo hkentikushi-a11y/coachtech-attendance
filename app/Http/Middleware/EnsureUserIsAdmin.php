@@ -15,6 +15,8 @@ class EnsureUserIsAdmin
      * Handle an incoming request.
      *
      * @param  Closure(Request): (Response)  $next
+     * @param  Request  $request  リクエスト
+     * @return Response 次の処理のレスポンス、または勤怠登録画面へのリダイレクト
      */
     public function handle(Request $request, Closure $next): Response
     {
