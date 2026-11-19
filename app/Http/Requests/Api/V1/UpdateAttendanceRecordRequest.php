@@ -28,7 +28,7 @@ class UpdateAttendanceRecordRequest extends StoreAttendanceRecordRequest
                 Rule::unique('attendance_records', 'date')->ignore($attendanceRecord)->where('user_id', $attendanceRecord->user_id)],
             'clock_in' => ['sometimes', 'required', 'date_format:H:i:s'],
             // clock_in が送信されていない場合は、登録済みの出勤時刻と比較する
-            'clock_out' => ['sometimes', 'nullable', 'date_format:H:i:s', 'after:' . ($this->has('clock_in') ? 'clock_in' : $attendanceRecord->clock_in)],
+            'clock_out' => ['sometimes', 'nullable', 'date_format:H:i:s', 'after:'.($this->has('clock_in') ? 'clock_in' : $attendanceRecord->clock_in)],
             'comment' => ['sometimes', 'nullable', 'string', 'max:255'],
         ];
     }

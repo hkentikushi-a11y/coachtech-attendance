@@ -35,8 +35,7 @@ class AttendanceReport
     public function __construct(
         private readonly Collection $records,
         private readonly CarbonInterface $today,
-    ) {
-    }
+    ) {}
 
     /**
      * ユーザーの集計期間（5ヶ月前の月初〜当月末）の退勤済みの勤怠を取得してレポートを作る

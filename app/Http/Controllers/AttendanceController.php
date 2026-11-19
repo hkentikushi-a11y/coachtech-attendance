@@ -21,7 +21,7 @@ class AttendanceController extends Controller
 
         return view('user.attendance-register', [
             'user' => $request->user(),
-            'formattedDate' => $now->format('Y年n月j日') . '(' . AttendancePresenter::weekday($now) . ')',
+            'formattedDate' => $now->format('Y年n月j日').'('.AttendancePresenter::weekday($now).')',
             'formattedTime' => $now->format('H:i'),
         ]);
     }

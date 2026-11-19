@@ -57,8 +57,8 @@ class UserAttendanceCorrectionTest extends TestCase
     private function submit(AttendanceRecord $record, array $overrides = []): TestResponse
     {
         return $this->actingAs($this->user)
-            ->from('/attendance/detail/' . $record->id)
-            ->post('/attendance/' . $record->id, $this->formData($overrides));
+            ->from('/attendance/detail/'.$record->id)
+            ->post('/attendance/'.$record->id, $this->formData($overrides));
     }
 
     /**
@@ -101,7 +101,7 @@ class UserAttendanceCorrectionTest extends TestCase
     {
         $this->submit($this->record, ['new_clock_out' => '18:30'])
             ->assertSessionHasNoErrors()
-            ->assertRedirect('/attendance/detail/' . $this->record->id);
+            ->assertRedirect('/attendance/detail/'.$this->record->id);
 
         $application = Application::firstOrFail();
         $this->assertSame(Application::STATUS_PENDING, $application->approval_status);
@@ -112,7 +112,7 @@ class UserAttendanceCorrectionTest extends TestCase
         $this->assertStringContainsString('申請 太郎', $pending);
         $this->assertStringContainsString('電車遅延のため', $pending);
 
-        $this->get('/stamp_correction_request/approve/' . $application->id)
+        $this->get('/stamp_correction_request/approve/'.$application->id)
             ->assertOk()
             ->assertSee('申請 太郎')
             ->assertSee('value="18:30"', false)
@@ -139,7 +139,7 @@ class UserAttendanceCorrectionTest extends TestCase
         $application = Application::firstOrFail();
 
         $admin = User::factory()->admin()->create();
-        $this->actingAs($admin)->post('/stamp_correction_request/approve/' . $application->id);
+        $this->actingAs($admin)->post('/stamp_correction_request/approve/'.$application->id);
 
         [$pending, $approved] = $this->tabs($this->actingAs($this->user)->get('/stamp_correction_request/list'));
 
@@ -153,10 +153,10 @@ class UserAttendanceCorrectionTest extends TestCase
         $application = Application::firstOrFail();
 
         $this->actingAs($this->user)->get('/stamp_correction_request/list')
-            ->assertSee('href="' . url('/application/' . $application->id) . '">詳細', false);
+            ->assertSee('href="'.url('/application/'.$application->id).'">詳細', false);
 
-        $this->get('/application/' . $application->id)->assertRedirect('/attendance/detail/' . $this->record->id);
-        $this->get('/attendance/detail/' . $this->record->id)
+        $this->get('/application/'.$application->id)->assertRedirect('/attendance/detail/'.$this->record->id);
+        $this->get('/attendance/detail/'.$this->record->id)
             ->assertOk()
             ->assertSee('承認待ちのため修正はできません。');
     }

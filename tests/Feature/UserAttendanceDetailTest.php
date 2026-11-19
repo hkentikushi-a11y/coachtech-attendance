@@ -26,7 +26,7 @@ class UserAttendanceDetailTest extends TestCase
         $record = AttendanceRecord::factory()->for($user)->create(['date' => '2026-11-10', 'clock_in' => '08:50:00', 'clock_out' => '17:40:00']);
         AttendanceBreak::factory()->for($record)->create(['break_in' => '12:10:00', 'break_out' => '13:05:00']);
 
-        $this->response = $this->actingAs($user)->get('/attendance/detail/' . $record->id);
+        $this->response = $this->actingAs($user)->get('/attendance/detail/'.$record->id);
     }
 
     public function test_勤怠詳細画面の名前がログインユーザーの氏名になっている(): void

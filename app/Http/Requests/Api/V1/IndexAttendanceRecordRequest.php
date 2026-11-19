@@ -35,7 +35,7 @@ class IndexAttendanceRecordRequest extends FormRequest
             'date' => ['nullable', 'date_format:Y-m-d'],
             'month' => ['nullable', 'date_format:Y-m'],
             'page' => ['nullable', 'integer', 'min:1'],
-            'per_page' => ['nullable', 'integer', 'min:1', 'max:' . self::MAX_PER_PAGE],
+            'per_page' => ['nullable', 'integer', 'min:1', 'max:'.self::MAX_PER_PAGE],
         ];
     }
 
@@ -54,7 +54,7 @@ class IndexAttendanceRecordRequest extends FormRequest
             'page.min' => 'ページ番号は 1 以上で指定してください。',
             'per_page.integer' => '1ページあたりの件数は整数で指定してください。',
             'per_page.min' => '1ページあたりの件数は 1 以上で指定してください。',
-            'per_page.max' => '1ページあたりの件数は ' . self::MAX_PER_PAGE . ' 以下で指定してください。',
+            'per_page.max' => '1ページあたりの件数は '.self::MAX_PER_PAGE.' 以下で指定してください。',
         ];
     }
 }

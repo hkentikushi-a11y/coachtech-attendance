@@ -89,7 +89,7 @@ class EmailVerificationTest extends TestCase
     public function test_改ざんした認証リンクでは認証されない(): void
     {
         $user = User::factory()->unverified()->create();
-        $url = str_replace('/email/verify/' . $user->id . '/', '/email/verify/' . $user->id . '/0', $this->verificationUrl($user));
+        $url = str_replace('/email/verify/'.$user->id.'/', '/email/verify/'.$user->id.'/0', $this->verificationUrl($user));
 
         $this->actingAs($user)->get($url)->assertForbidden();
 

@@ -33,7 +33,7 @@ class AttendanceStatusTest extends TestCase
     {
         $this->actingAs($this->user)
             ->get('/attendance')
-            ->assertSee('<p class="attendance__status--item">' . $status . '</p>', false);
+            ->assertSee('<p class="attendance__status--item">'.$status.'</p>', false);
     }
 
     public function test_勤務外の場合_勤怠ステータスが正しく表示される(): void

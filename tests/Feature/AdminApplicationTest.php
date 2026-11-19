@@ -82,7 +82,7 @@ class AdminApplicationTest extends TestCase
         $application->update(['new_clock_in' => '08:30', 'new_clock_out' => '17:15']);
         ProposalBreak::factory()->for($application)->create(['break_in' => '12:30:00', 'break_out' => '13:20:00']);
 
-        $this->actingAs($this->admin)->get('/stamp_correction_request/approve/' . $application->id)
+        $this->actingAs($this->admin)->get('/stamp_correction_request/approve/'.$application->id)
             ->assertOk()
             ->assertSee('value="申請 太郎"', false)
             ->assertSeeInOrder(['value="2026年"', 'value="11月10日"'], false)
@@ -103,8 +103,8 @@ class AdminApplicationTest extends TestCase
         $application->update(['new_clock_in' => '09:30', 'new_clock_out' => '18:30']);
         ProposalBreak::factory()->for($application)->create(['break_in' => '12:15:00', 'break_out' => '13:15:00']);
 
-        $this->actingAs($this->admin)->post('/stamp_correction_request/approve/' . $application->id)
-            ->assertRedirect('/stamp_correction_request/approve/' . $application->id);
+        $this->actingAs($this->admin)->post('/stamp_correction_request/approve/'.$application->id)
+            ->assertRedirect('/stamp_correction_request/approve/'.$application->id);
 
         $this->assertSame(Application::STATUS_APPROVED, $application->fresh()->approval_status);
         $this->assertDatabaseHas('attendance_records', ['id' => $record->id, 'clock_in' => '09:30:00', 'clock_out' => '18:30:00', 'comment' => '電車遅延のため']);
@@ -112,10 +112,10 @@ class AdminApplicationTest extends TestCase
             [['12:15:00', '13:15:00']],
             $record->breaks()->get(['break_in', 'break_out'])->map(fn (AttendanceBreak $break) => [$break->break_in, $break->break_out])->all()
         );
-        $this->get('/stamp_correction_request/approve/' . $application->id)->assertSee('<p class="applied-form__item">承認済み</p>', false);
+        $this->get('/stamp_correction_request/approve/'.$application->id)->assertSee('<p class="applied-form__item">承認済み</p>', false);
 
         // 一般ユーザーの画面にも反映される
-        $this->actingAs($user)->get('/attendance/detail/' . $record->id)
+        $this->actingAs($user)->get('/attendance/detail/'.$record->id)
             ->assertSee('name="new_clock_in" value="09:30"', false)
             ->assertSee('name="new_break_in[0]" value="12:15"', false);
     }

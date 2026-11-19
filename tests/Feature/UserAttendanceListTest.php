@@ -73,9 +73,9 @@ class UserAttendanceListTest extends TestCase
         $record = AttendanceRecord::factory()->for($this->user)->create(['date' => '2026-11-10']);
 
         $this->actingAs($this->user)->get('/attendance/list')
-            ->assertSee('href="' . url('/attendance/' . $record->id) . '">詳細', false);
+            ->assertSee('href="'.url('/attendance/'.$record->id).'">詳細', false);
 
-        $this->get('/attendance/' . $record->id)->assertRedirect('/attendance/detail/' . $record->id);
-        $this->get('/attendance/detail/' . $record->id)->assertOk()->assertSee('11月10日');
+        $this->get('/attendance/'.$record->id)->assertRedirect('/attendance/detail/'.$record->id);
+        $this->get('/attendance/detail/'.$record->id)->assertOk()->assertSee('11月10日');
     }
 }

@@ -32,10 +32,10 @@ class SanctumAuthTest extends TestCase
         $this->postJson('/api/v1/attendance-records', ['date' => '2026-12-01', 'clock_in' => '09:00:00'])
             ->assertUnauthorized()
             ->assertExactJson(['message' => 'Unauthenticated.']);
-        $this->putJson('/api/v1/attendance-records/' . $this->record->id, ['clock_out' => '19:00:00'])
+        $this->putJson('/api/v1/attendance-records/'.$this->record->id, ['clock_out' => '19:00:00'])
             ->assertUnauthorized()
             ->assertExactJson(['message' => 'Unauthenticated.']);
-        $this->deleteJson('/api/v1/attendance-records/' . $this->record->id)
+        $this->deleteJson('/api/v1/attendance-records/'.$this->record->id)
             ->assertUnauthorized()
             ->assertExactJson(['message' => 'Unauthenticated.']);
 
@@ -53,10 +53,10 @@ class SanctumAuthTest extends TestCase
     {
         Sanctum::actingAs($this->owner, ['*']);
 
-        $this->putJson('/api/v1/attendance-records/' . $this->record->id, ['comment' => '本人が更新'])->assertOk();
+        $this->putJson('/api/v1/attendance-records/'.$this->record->id, ['comment' => '本人が更新'])->assertOk();
         $this->assertDatabaseHas('attendance_records', ['id' => $this->record->id, 'comment' => '本人が更新']);
 
-        $this->deleteJson('/api/v1/attendance-records/' . $this->record->id)->assertNoContent();
+        $this->deleteJson('/api/v1/attendance-records/'.$this->record->id)->assertNoContent();
         $this->assertDatabaseMissing('attendance_records', ['id' => $this->record->id]);
     }
 
@@ -64,10 +64,10 @@ class SanctumAuthTest extends TestCase
     {
         Sanctum::actingAs(User::factory()->create(), ['*']);
 
-        $this->putJson('/api/v1/attendance-records/' . $this->record->id, ['comment' => '他人が更新'])
+        $this->putJson('/api/v1/attendance-records/'.$this->record->id, ['comment' => '他人が更新'])
             ->assertForbidden()
             ->assertExactJson(['error' => 'この操作を実行する権限がありません。']);
-        $this->deleteJson('/api/v1/attendance-records/' . $this->record->id)
+        $this->deleteJson('/api/v1/attendance-records/'.$this->record->id)
             ->assertForbidden()
             ->assertExactJson(['error' => 'この操作を実行する権限がありません。']);
 
@@ -78,10 +78,10 @@ class SanctumAuthTest extends TestCase
     {
         Sanctum::actingAs(User::factory()->admin()->create(), ['*']);
 
-        $this->putJson('/api/v1/attendance-records/' . $this->record->id, ['comment' => '管理者が更新'])->assertOk();
+        $this->putJson('/api/v1/attendance-records/'.$this->record->id, ['comment' => '管理者が更新'])->assertOk();
         $this->assertDatabaseHas('attendance_records', ['id' => $this->record->id, 'comment' => '管理者が更新']);
 
-        $this->deleteJson('/api/v1/attendance-records/' . $this->record->id)->assertNoContent();
+        $this->deleteJson('/api/v1/attendance-records/'.$this->record->id)->assertNoContent();
         $this->assertDatabaseMissing('attendance_records', ['id' => $this->record->id]);
     }
 }

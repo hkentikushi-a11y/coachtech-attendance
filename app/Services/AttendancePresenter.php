@@ -66,7 +66,7 @@ class AttendancePresenter
 
                 return [
                     'id' => $record?->id,
-                    'date' => $day->format('m/d') . '(' . self::weekday($day) . ')',
+                    'date' => $day->format('m/d').'('.self::weekday($day).')',
                     'clock_in' => self::time($record?->clock_in),
                     'clock_out' => self::time($record?->clock_out),
                     'total_break_time' => $record?->total_break_time ?? '',

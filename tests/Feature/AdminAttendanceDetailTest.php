@@ -36,8 +36,8 @@ class AdminAttendanceDetailTest extends TestCase
     private function submit(array $overrides = []): TestResponse
     {
         return $this->actingAs($this->admin)
-            ->from('/admin/attendance/' . $this->record->id)
-            ->post('/attendance/' . $this->record->id, array_merge([
+            ->from('/admin/attendance/'.$this->record->id)
+            ->post('/attendance/'.$this->record->id, array_merge([
                 'new_clock_in' => '09:00',
                 'new_clock_out' => '18:00',
                 'new_break_in' => ['12:00', ''],
@@ -48,7 +48,7 @@ class AdminAttendanceDetailTest extends TestCase
 
     public function test_勤怠詳細画面に表示されるデータが選択したものになっている(): void
     {
-        $this->actingAs($this->admin)->get('/admin/attendance/' . $this->record->id)
+        $this->actingAs($this->admin)->get('/admin/attendance/'.$this->record->id)
             ->assertOk()
             ->assertSee('name="name" value="詳細 太郎"', false)
             ->assertSeeInOrder(['value="2026年"', 'value="11月10日"'], false)
@@ -85,7 +85,7 @@ class AdminAttendanceDetailTest extends TestCase
     {
         $this->submit(['new_clock_out' => '18:45'])
             ->assertSessionHasNoErrors()
-            ->assertRedirect('/admin/attendance/' . $this->record->id);
+            ->assertRedirect('/admin/attendance/'.$this->record->id);
 
         $this->assertDatabaseHas('attendance_records', ['id' => $this->record->id, 'clock_in' => '09:00:00', 'clock_out' => '18:45:00', 'comment' => '管理者による修正']);
         $this->assertDatabaseHas('breaks', ['attendance_record_id' => $this->record->id, 'break_in' => '12:00:00', 'break_out' => '13:00:00']);

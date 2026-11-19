@@ -75,7 +75,7 @@ class ApiWriteTest extends TestCase
     {
         $record = AttendanceRecord::factory()->for($this->user)->create(['date' => '2026-12-01', 'clock_in' => '09:00:00', 'clock_out' => '18:00:00']);
 
-        $this->putJson('/api/v1/attendance-records/' . $record->id, ['clock_out' => '19:30:00', 'comment' => '残業'])
+        $this->putJson('/api/v1/attendance-records/'.$record->id, ['clock_out' => '19:30:00', 'comment' => '残業'])
             ->assertOk()
             ->assertJsonPath('data.clock_out', '19:30:00');
 
@@ -91,7 +91,7 @@ class ApiWriteTest extends TestCase
     {
         $record = AttendanceRecord::factory()->for($this->user)->create(['clock_in' => '09:00:00']);
 
-        $this->putJson('/api/v1/attendance-records/' . $record->id, ['clock_out' => '08:00:00'])
+        $this->putJson('/api/v1/attendance-records/'.$record->id, ['clock_out' => '08:00:00'])
             ->assertStatus(422)
             ->assertJsonPath('errors.clock_out.0', '退勤時刻は出勤時刻より後の時刻を指定してください。');
     }
@@ -101,7 +101,7 @@ class ApiWriteTest extends TestCase
         $record = AttendanceRecord::factory()->for($this->user)->create();
         AttendanceBreak::factory()->for($record)->create();
 
-        $this->deleteJson('/api/v1/attendance-records/' . $record->id)->assertNoContent();
+        $this->deleteJson('/api/v1/attendance-records/'.$record->id)->assertNoContent();
 
         $this->assertDatabaseMissing('attendance_records', ['id' => $record->id]);
         $this->assertDatabaseMissing('breaks', ['attendance_record_id' => $record->id]);

@@ -44,7 +44,7 @@ class AdminStaffTest extends TestCase
         AttendanceRecord::factory()->for($this->staff)->create(['date' => '2026-11-05', 'clock_in' => '08:55:00', 'clock_out' => '17:35:00']);
         AttendanceRecord::factory()->create(['date' => '2026-11-03', 'clock_in' => '07:07:00']);
 
-        $this->actingAs($this->admin)->get('/admin/attendance/staff/' . $this->staff->id)
+        $this->actingAs($this->admin)->get('/admin/attendance/staff/'.$this->staff->id)
             ->assertOk()
             ->assertSee('社員 一郎さんの勤怠')
             ->assertSee('<p class="current-month">2026/11</p>', false)
@@ -56,10 +56,10 @@ class AdminStaffTest extends TestCase
     {
         AttendanceRecord::factory()->for($this->staff)->create(['date' => '2026-10-20', 'clock_in' => '08:20:00', 'clock_out' => '17:20:00']);
 
-        $this->actingAs($this->admin)->get('/admin/attendance/staff/' . $this->staff->id)
+        $this->actingAs($this->admin)->get('/admin/attendance/staff/'.$this->staff->id)
             ->assertSee('href="?date=2026-10"', false);
 
-        $this->get('/admin/attendance/staff/' . $this->staff->id . '?date=2026-10')
+        $this->get('/admin/attendance/staff/'.$this->staff->id.'?date=2026-10')
             ->assertSee('<p class="current-month">2026/10</p>', false)
             ->assertSeeInOrder(['10/20(火)', '08:20', '17:20']);
     }
@@ -68,10 +68,10 @@ class AdminStaffTest extends TestCase
     {
         AttendanceRecord::factory()->for($this->staff)->create(['date' => '2026-12-03', 'clock_in' => '09:40:00', 'clock_out' => '18:40:00']);
 
-        $this->actingAs($this->admin)->get('/admin/attendance/staff/' . $this->staff->id)
+        $this->actingAs($this->admin)->get('/admin/attendance/staff/'.$this->staff->id)
             ->assertSee('href="?date=2026-12"', false);
 
-        $this->get('/admin/attendance/staff/' . $this->staff->id . '?date=2026-12')
+        $this->get('/admin/attendance/staff/'.$this->staff->id.'?date=2026-12')
             ->assertSee('<p class="current-month">2026/12</p>', false)
             ->assertSeeInOrder(['12/03(木)', '09:40', '18:40']);
     }
@@ -80,10 +80,10 @@ class AdminStaffTest extends TestCase
     {
         $record = AttendanceRecord::factory()->for($this->staff)->create(['date' => '2026-11-10']);
 
-        $this->actingAs($this->admin)->get('/admin/attendance/staff/' . $this->staff->id)
-            ->assertSee('href="' . url('/attendance/' . $record->id) . '">詳細', false);
+        $this->actingAs($this->admin)->get('/admin/attendance/staff/'.$this->staff->id)
+            ->assertSee('href="'.url('/attendance/'.$record->id).'">詳細', false);
 
-        $this->get('/attendance/' . $record->id)->assertRedirect('/admin/attendance/' . $record->id);
-        $this->get('/admin/attendance/' . $record->id)->assertOk()->assertSee('11月10日');
+        $this->get('/attendance/'.$record->id)->assertRedirect('/admin/attendance/'.$record->id);
+        $this->get('/admin/attendance/'.$record->id)->assertOk()->assertSee('11月10日');
     }
 }

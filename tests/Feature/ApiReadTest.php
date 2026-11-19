@@ -63,7 +63,7 @@ class ApiReadTest extends TestCase
         AttendanceBreak::factory()->for($record)->create(['break_in' => '12:00:00', 'break_out' => '13:00:00']);
         Application::factory()->for($record)->for($user)->create(['comment' => '打刻漏れのため']);
 
-        $this->getJson('/api/v1/attendance-records/' . $record->id)
+        $this->getJson('/api/v1/attendance-records/'.$record->id)
             ->assertOk()
             ->assertJsonPath('data.id', $record->id)
             ->assertJsonPath('data.user.name', 'API 太郎')

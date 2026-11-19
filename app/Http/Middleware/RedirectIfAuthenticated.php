@@ -13,7 +13,7 @@ class RedirectIfAuthenticated
     /**
      * ログイン済みのユーザーがログイン画面などを開いた場合、ロールに応じたトップ画面へ移す
      *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     * @param  Closure(Request): (Response)  $next
      */
     public function handle(Request $request, Closure $next, string ...$guards): Response
     {
