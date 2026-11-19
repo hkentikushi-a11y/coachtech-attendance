@@ -26,8 +26,8 @@ Route::get('/admin/login', [AdminLoginController::class, 'create'])->middleware(
 Route::post('/admin/login', [AuthenticatedSessionController::class, 'store'])->middleware(['guest', 'throttle:login']);
 Route::post('/admin/logout', [AuthenticatedSessionController::class, 'destroy'])->middleware('auth');
 
-// 一般ユーザー
-Route::middleware(['auth', 'general'])->group(function () {
+// 一般ユーザー（メール認証が済んでいない場合は、メール認証誘導画面へ移される）
+Route::middleware(['auth', 'verified', 'general'])->group(function () {
     Route::get('/attendance', [AttendanceController::class, 'index']);
     Route::post('/attendance', [AttendanceController::class, 'store']);
     Route::get('/attendance/list', [AttendanceController::class, 'list']);
@@ -36,7 +36,7 @@ Route::middleware(['auth', 'general'])->group(function () {
 });
 
 // 一般ユーザー・管理者で共通（提供 Blade が同じ URL を使うため、コントローラー内でロールにより処理を分ける）
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/attendance/{id}', [AttendanceDetailController::class, 'show'])->whereNumber('id');
     Route::post('/attendance/{id}', [AttendanceDetailController::class, 'update'])->whereNumber('id');
     Route::get('/stamp_correction_request/list', [ApplicationController::class, 'index']);
@@ -53,4 +53,5 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
     Route::get('/stamp_correction_request/approve/{attendance_correct_request_id}', [AdminApplicationController::class, 'show'])->whereNumber('attendance_correct_request_id');
     Route::post('/stamp_correction_request/approve/{attendance_correct_request_id}', [AdminApplicationController::class, 'approve'])->whereNumber('attendance_correct_request_id');
+    Route::post('/export', [AdminAttendanceController::class, 'export']);
 });

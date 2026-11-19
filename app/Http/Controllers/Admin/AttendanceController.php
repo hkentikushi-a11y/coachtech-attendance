@@ -3,14 +3,19 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\AttendanceExportRequest;
 use App\Models\AttendanceRecord;
 use App\Models\User;
 use App\Services\AttendancePresenter;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class AttendanceController extends Controller
 {
+    private const CSV_HEADER = ['日付', '出勤', '退勤', '休憩', '合計', '備考'];
+
     /**
      * その日の全ユーザーの勤怠一覧を表示する（?date=YYYY-MM-DD で日を切り替える）
      */
@@ -60,5 +65,41 @@ class AttendanceController extends Controller
             'user' => $record->user,
             'attendanceRecord' => AttendancePresenter::withOldInput(AttendancePresenter::detail($record), $request->old()),
         ]);
+    }
+
+    /**
+     * 選択したユーザー・月の勤怠一覧を CSV でダウンロードさせる
+     *
+     * Excel で開いても文字化けしないよう、BOM 付きの UTF-8・改行 CRLF で出力する
+     */
+    public function export(AttendanceExportRequest $request): StreamedResponse
+    {
+        $user = User::findOrFail($request->integer('user_id'));
+        $month = Carbon::createFromFormat('!Y-m', $request->input('year_month'));
+
+        $rows = $user->attendanceRecords()
+            ->with('breaks')
+            ->whereBetween('date', [$month->toDateString(), $month->copy()->endOfMonth()->toDateString()])
+            ->orderBy('date')
+            ->get()
+            ->map(fn (AttendanceRecord $record) => [
+                $record->date->format('Y/m/d'),
+                AttendancePresenter::time($record->clock_in),
+                AttendancePresenter::time($record->clock_out),
+                $record->total_break_time,
+                $record->total_time ?? '',
+                $record->comment ?? '',
+            ]);
+
+        $fileName = "{$user->name}_{$month->format('Y年m月')}_勤怠一覧.csv";
+
+        return response()->streamDownload(function () use ($rows): void {
+            $output = fopen('php://output', 'w');
+            fwrite($output, "\u{FEFF}");
+            collect([self::CSV_HEADER])
+                ->concat($rows)
+                ->each(fn (array $row) => fputcsv($output, $row, eol: "\r\n"));
+            fclose($output);
+        }, $fileName, ['Content-Type' => 'text/csv; charset=UTF-8']);
     }
 }

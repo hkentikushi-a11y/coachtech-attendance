@@ -6,6 +6,8 @@ use App\Actions\Fortify\CreateNewUser;
 use App\Http\Requests\LoginRequest;
 use App\Http\Responses\LoginResponse;
 use App\Http\Responses\LogoutResponse;
+use App\Http\Responses\VerificationLinkSentResponse;
+use App\Http\Responses\VerifyEmailResponse;
 use App\Models\User;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
@@ -13,8 +15,10 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
+use Laravel\Fortify\Contracts\EmailVerificationNotificationSentResponse;
 use Laravel\Fortify\Contracts\LoginResponse as LoginResponseContract;
 use Laravel\Fortify\Contracts\LogoutResponse as LogoutResponseContract;
+use Laravel\Fortify\Contracts\VerifyEmailResponse as VerifyEmailResponseContract;
 use Laravel\Fortify\Fortify;
 use Laravel\Fortify\Http\Requests\LoginRequest as FortifyLoginRequest;
 
@@ -28,6 +32,8 @@ class FortifyServiceProvider extends ServiceProvider
         $this->app->bind(FortifyLoginRequest::class, LoginRequest::class);
         $this->app->singleton(LoginResponseContract::class, LoginResponse::class);
         $this->app->singleton(LogoutResponseContract::class, LogoutResponse::class);
+        $this->app->singleton(EmailVerificationNotificationSentResponse::class, VerificationLinkSentResponse::class);
+        $this->app->singleton(VerifyEmailResponseContract::class, VerifyEmailResponse::class);
     }
 
     /**
@@ -39,6 +45,7 @@ class FortifyServiceProvider extends ServiceProvider
 
         Fortify::registerView(fn () => view('user.register'));
         Fortify::loginView(fn () => view('user.user-login'));
+        Fortify::verifyEmailView(fn () => view('auth.verify-email'));
 
         // 一般ユーザーは /login、管理者は /admin/login からのみログインできる
         Fortify::authenticateUsing(function (Request $request): ?User {
