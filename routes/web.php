@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\StaffController;
 use App\Http\Controllers\ApplicationController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\AttendanceDetailController;
+use App\Http\Controllers\ReportController;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
 
@@ -31,6 +32,7 @@ Route::middleware(['auth', 'verified', 'general'])->group(function () {
     Route::get('/attendance', [AttendanceController::class, 'index']);
     Route::post('/attendance', [AttendanceController::class, 'store']);
     Route::get('/attendance/list', [AttendanceController::class, 'list']);
+    Route::get('/attendance/report', [ReportController::class, 'index']);
     Route::get('/attendance/detail/{id}', [AttendanceController::class, 'show'])->whereNumber('id');
     Route::get('/application/{id}', [ApplicationController::class, 'show'])->whereNumber('id');
 });
